@@ -1,0 +1,21 @@
+{
+  "name": "eureka/middleware-thumbnail",
+  "description": "Middleware to generate thumbnail for ask images.",
+  "type": "library",
+  "license": "MIT",
+
+  "authors": [
+    {
+      "name": "Romain Cottard",
+      "role": "Developer"
+    }
+
+  ],
+
+  "autoload": {
+    "psr-4": {
+      "Eureka\\Middleware\\Thumbnail\\": "./src"
+    }
+  }
+
+}

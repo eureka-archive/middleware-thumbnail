@@ -108,7 +108,7 @@ class ThumbnailMiddleware implements ServerMiddlewareInterface
     /**
      * Assert the original image exist & thumbnail uri is valid.
      *
-     * @return void
+     * @return $this
      * @throws \DomainException
      * @throws \UnderflowException
      * @throws \RuntimeException
@@ -119,8 +119,8 @@ class ThumbnailMiddleware implements ServerMiddlewareInterface
             throw new \DomainException('Invalid MD5!');
         }
 
-        if ($this->maxWidth <= 0 || $this->maxHeight <= 0) {
-            throw new \UnderflowException('Invalid width / height! (There must be greater than 0)');
+        if ($this->maxWidth <= 0 && $this->maxHeight <= 0) {
+            throw new \UnderflowException('Invalid width & height! (There must be greater than 0)');
         }
 
         if (!in_array($this->extension, ['jpg', 'png'])) {
@@ -153,7 +153,14 @@ class ThumbnailMiddleware implements ServerMiddlewareInterface
     protected function readFile(ServerRequestInterface $request, ResponseInterface $response)
     {
         $image = new Image($this->imageFilepath);
-        $image->resize($this->maxWidth, $this->maxHeight, true);
+
+        if ($this->maxHeight === 0) {
+            $image->resizeOnWidth($this->maxWidth);
+        } elseif ($this->maxWidth === 0) {
+            $image->resizeOnHeight($this->maxHeight);
+        } else {
+            $image->resize($this->maxWidth, $this->maxHeight, true);
+        }
 
         //~ Save thumbnail
         if ($this->config->get('global.cache.thumbnail.enabled')) {
